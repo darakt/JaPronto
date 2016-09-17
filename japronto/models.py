@@ -1,25 +1,31 @@
+# -*- coding: utf-8 -*-
 #model
 
 from . import db
+import uuid
 
 class Users(db.Model):
-    id = db.Column(db.Integer, primary_key='true')
+    id = db.Column(db.Integer , primary_key='true')
     pseudo = db.Column(db.String(100))
     name = db.Column(db.String(100))
-    CPF = db.Column(db.String(100))
+    cpf = db.Column(db.String(100))
     status = db.Column(db.Integer)
     wants = db.relationship('Wants', backref='users', lazy='dynamic')
     dishes = db.relationship('Dishes', backref='users', lazy='dynamic')
     
     def __init__(self, pseudo, name, cpf, st):
+        self.id = None
         self.pseudo = pseudo 
         self.name = name
-        self.CPF = cpf
+        self.cpf = cpf
         self.status = st
+
+    def __str__(self):
+        return "<User: id: %s pseudo: %s name: %s CPF: %s status: %d>" % ( self.id, self.pseudo, self.name, self.cpf, self.status)
 
 
 class Wants(db.Model):
-    id = db.Column(db.Integer, primary_key='true')
+    id = db.Column(db.Integer, primary_key=True, default=lambda: uuid.uuid4().hex)
     chef_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     for_the = db.Column(db.DateTime)
     state = db.Column(db.Integer)
@@ -35,5 +41,5 @@ class Dishes(db.Model):
     description = db.Column(db.Text)
     disponibility = db.Column(db.Boolean)
 
-    def __init__(self, **kwargs):
-        super(User, self).__init__(**kwargs)
+    #def __init__(self, **kwargs):
+    #    super(User, self).__init__(**kwargs)

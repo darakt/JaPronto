@@ -1,24 +1,28 @@
-from japronto import db, app
+# -*- coding: utf-8 -*-
+
+from .__init__ import db, app
+from .models import Users
+from flask import jsonify
+
+@app.route('/')
+def hello_world():
+    return 'hello'
 
 @app.errorhandler(404)
 def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
+    return "404 error",404
 
 
 @app.route('/japronto/api/foods', methods=['GET'])
 def get_foods():
-    # return jsonify({'foods':foods})
-    dude = 'Mon Cul'
-    print 'Mon cul'
     return jsonify({'users': dude})
 
 
 @app.route('/japronto/api/foods/<int:food_id>', methods={'GET'})
 def get_food(food_id):
-    food = [food for food in foods if food['id'] == food_id]
-    if len(food) == 0:
-        abort(404)
-    return jsonify({'food': food[0]})
+    dude = Users.query.filter_by(status = food_id).first()
+    #dude = jsonify(pseudo=dude.pseudo, name=dude.name)
+    return jsonify(name=dude.name, pseudo=dude.pseudo)
 
 
 @app.route('/japronto/api/foods', methods=['POST'])

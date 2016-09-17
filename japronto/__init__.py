@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask import Flask, abort, make_response, request
 from flask_sqlalchemy import SQLAlchemy
 
@@ -9,12 +11,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = 'False'
 
 db = SQLAlchemy(app)
 
-db.init_app(app)
-
+db.init_app(app
+)
 #test
 
 from models import Users, Wants, Dishes
-
 
 with app.app_context():
     db.create_all()
@@ -30,3 +31,8 @@ db.session.add(m3)
 db.session.add(m4)
 
 db.session.commit()
+
+#test = Users.query.filter_by(name = 'bob').first()
+#print test
+
+import japronto.views 
