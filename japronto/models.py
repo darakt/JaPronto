@@ -7,21 +7,29 @@ import uuid
 class Users(db.Model):
     id = db.Column(db.Integer , primary_key='true')
     pseudo = db.Column(db.String(100))
+    password = db.Column(db.String(100))
     name = db.Column(db.String(100))
+    surname = db.Column(db.String(100))
+    phone = db.Column(db.String(100))
+    mail = db.Column(db.String(100))
     cpf = db.Column(db.String(100))
     status = db.Column(db.Integer)
     wants = db.relationship('Wants', backref='users', lazy='dynamic')
     dishes = db.relationship('Dishes', backref='users', lazy='dynamic')
     
-    def __init__(self, pseudo, name, cpf, st):
+    def __init__(self, pseudo, password, name, surname, phone, mail, cpf, st):
         self.id = None
         self.pseudo = pseudo 
+        self.password = password
         self.name = name
+        self.surname = surname
+        self.phone = phone
+        self.mail = mail
         self.cpf = cpf
         self.status = st
 
     def __str__(self):
-        return "<User: id: %s pseudo: %s name: %s CPF: %s status: %d>" % ( self.id, self.pseudo, self.name, self.cpf, self.status)
+        return "<User: id: %s pseudo: %s password: %s name: %s CPF: %s status: %d>" % ( self.id, self.pseudo, self.password, self.name, self.cpf, self.status)
 
 
 class Wants(db.Model):
