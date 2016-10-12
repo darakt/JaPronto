@@ -5,18 +5,28 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 
 /**
  * Created by darakt on 20/09/16.
  */
 
-public class Dish {
-    int id;
-    int id_chef;
-    String name;
-    Bitmap image;
-    String description;
-    boolean disponibility;
+public class Dish implements Serializable{
+    int id=0;
+    int id_chef=0;
+    String name="";
+    String image;
+    String description="";
+    int disponibility;
+
+    public Dish(int id, int id_chef, String name, String image, String description, int disponibility) {
+        this.id = id;
+        this.id_chef = id_chef;
+        this.name = name;
+        this.image = image;
+        this.description = description;
+        this.disponibility = disponibility;
+    }
 
     public int getId() {
         return id;
@@ -30,10 +40,8 @@ public class Dish {
         return name;
     }
 
-    public Bitmap getImage() {
-        return image;
-    }
 
+    /*
     public String getImageBase64(){
         //TODO: implement conversion
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -43,20 +51,26 @@ public class Dish {
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public boolean isDisponibility() {
-        return disponibility;
-    }
-
     public void setImageBase64(String base64String){
         //TODO: implement conversion
         byte[] imageAsBytes = Base64.decode(base64String.getBytes(), Base64.DEFAULT);
         this.image = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 
     }
+    */
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
 
     public void setId(int id) {
         this.id = id;
@@ -70,15 +84,8 @@ public class Dish {
         this.name = name;
     }
 
-    public void setImage(Bitmap image) {
-        this.image = image;
-    }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public void setDisponibility(boolean disponibility) {
-        this.disponibility = disponibility;
     }
 }

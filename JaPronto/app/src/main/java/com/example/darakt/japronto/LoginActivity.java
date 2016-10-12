@@ -61,7 +61,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void login() {
         Log.d(TAG, "Login");
-
+        //TODO : del next line
+        //onLoginSuccess();
         final ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
