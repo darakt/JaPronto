@@ -99,7 +99,7 @@ public class SignupActivity extends AppCompatActivity {
         String pseudo = _pseudo.getText().toString();
         String phone = _phone.getText().toString();
 
-        this.user = new User(pseudo, password, name, surname, phone, email, cpf);
+        this.user = new User(pseudo, password, name, surname,"", phone, email, cpf);
 
         ApiService apiService = ApiManager.createService(ApiService.class);
 

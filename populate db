@@ -1,0 +1,59 @@
+#populate db
+
+use japronto;
+
+insert into users values (11, 'chef', '123', 'al', 'dugenoux','Ceci est une presentation' ,'06','dtc@ntm', '1488292', 2);
+insert into users values (10, 'gourmet', '123', 'bob','surname', 'Ceci est une presentation','07', 'dtc@smt', '1488292', 1);
+insert into users values (12, 'vald', '123', 'vald', 'ld', 'Ceci est une presentation','06','dtc@ntm', '1488292', 3);
+
+insert into dishes values (2, 11, 'prato 2','','c''est vraiment bon',true,0);
+insert into dishes values (3, 11, 'prato 3','','c''est vraiment bon',true,0);
+insert into dishes values (4, 11, 'prato 4','','c''est vraiment bon',true,0);
+insert into dishes values (5, 11, 'prato 5','','c''est vraiment bon',true,0);
+insert into dishes values (6, 11, 'prato 6','','c''est vraiment bon',true,0);
+
+insert into reviews values (1, 11, 12, 2, 8, 'Ohhh c''est bon');
+
+insert into hours values (1, 11, '12:00:00', '13:00:00', true);
+insert into hours values (2, 11, '12:00:00', '14:00:00', true);
+insert into hours values (3, 11, '16:00:00', '18:00:00', false);
+insert into hours values (4, 11, '19:00:00', '22:00:00', true);
+insert into hours values (5, 11, '10:00:00', '13:0:000', false);
+
+
+insert into area values (1, 11, -23.555495, -46.687636);
+insert into area values (2, 11, -23.551359, -46.735560);
+insert into area values (3, 11, -23.553631, -46.730378);
+insert into area values (4, 11, -23.556375, -46.726548);
+insert into area values (5, 11, -23.558578, -46.725111);
+insert into area values (6, 11, -23.560545, -46.727578);
+insert into area values (7, 11, -23.562600, -46.725808);
+insert into area values (8, 11, -23.561095, -46.734166);
+insert into area values (9, 11, -23.559154, -46.684148);
+insert into area values (10, 11, -23.556302, -46.692946);
+insert into area values (11, 11, -23.553017, -46.690435);
+insert into area values (12, 11, -23.558171, -46.684577);
+insert into area values (13, 11, -23.564091, -46.683011);
+insert into area values (14, 11, -23.563737, -46.687517);
+insert into area values (15, 11, -23.566162, -46.722922);
+insert into area values (16, 11, -23.558530, -46.718717);
+insert into area values (17, 11, -23.570882, -46.726956);
+insert into area values (18, 11, -23.572023, -46.706786);
+
+insert into wants values (1, 11, '2017-03-02', '12:30:00', 1, -23.563357, -46.721498, null);
+insert into wants values (2, 11, '2017-02-02', '12:30:00', 1, -23.563357, -46.721898, null);
+insert into wants values (3, 11, '2017-01-02', '12:30:00', 1, -23.563357, -46.721398, null);
+insert into wants values (4, 11, '2017-04-02', '12:30:00', 1, -23.563357, -46.721198, null);
+insert into wants values (5, 11, '2017-05-02', '12:30:00', 1, -23.563357, -46.721458, null);
+
+insert into Eat values (1, 2, 3, 8);
+insert into Eat values (2, 2, 3, 3);
+insert into Eat values (3, 2, 5, 7);
+insert into Eat values (4, 3, 4, 12);
+
+insert into clients values (1, 2, 10);
+insert into clients values (2, 3, 12);
+insert into clients values (3, 1, 10);
+insert into clients values (4, 5, 12);
+insert into clients values (5, 4, 10);
+

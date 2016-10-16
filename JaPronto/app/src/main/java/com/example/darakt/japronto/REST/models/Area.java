@@ -1,5 +1,6 @@
 package com.example.darakt.japronto.REST.models;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
@@ -7,13 +8,14 @@ import java.util.Vector;
  * Created by darakt on 06/10/16.
  */
 
-public class Area {
+public class Area implements Serializable{
     public int id = 0;
     public int id_chef = 0;
     public String lat = "";
     public String lng = "";
     public String distance = "";
     public User chef = new User();
+    private static final long serialVersionUID = 465007646;
 
     public List<Dish> getMenu() {
         return menu;

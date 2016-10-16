@@ -15,21 +15,51 @@ public class Dish implements Serializable{
     int id=0;
     int id_chef=0;
     String name="";
-    String image;
+    String image="";
     String description="";
     int disponibility;
+    int number = 0;
+    private static final long serialVersionUID = 465997646;
 
-    public Dish(int id, int id_chef, String name, String image, String description, int disponibility) {
+
+    public Dish(int id, int id_chef, String name, String image, String description, int disponibility, int number) {
         this.id = id;
         this.id_chef = id_chef;
         this.name = name;
         this.image = image;
         this.description = description;
         this.disponibility = disponibility;
+        this.number = number;
+    }
+
+    public Dish(Dish dish){
+        this.id = dish.id;
+        this.id_chef = dish.id_chef;
+        this.name = dish.name;
+        this.image = dish.image;
+        this.description = dish.description;
+        this.disponibility = dish.disponibility;
+        this.number = 0;
     }
 
     public int getId() {
         return id;
+    }
+
+    public int getDisponibility() {
+        return disponibility;
+    }
+
+    public void setDisponibility(int disponibility) {
+        this.disponibility = disponibility;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 
     public int getId_chef() {

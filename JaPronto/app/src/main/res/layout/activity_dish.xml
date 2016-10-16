@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView android:id="@+id/DishImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:layout_gravity="center"
+        android:src="@mipmap/logo"
+        />
+
+    <TextView
+        android:id="@+id/DishName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="#ff0000"/>
+
+    <TextView
+        android:id="@+id/DishDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="#ff0000"/>
+
+    <TextView
+        android:id="@+id/Dishavg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="#ff0000"/>
+
+    <com.wefika.horizontalpicker.HorizontalPicker
+        xmlns:picker="http://schemas.android.com/apk/res/com.example.darakt.japronto"
+        android:id="@+id/picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="22sp"
+        android:ellipsize="none"
+        android:marqueeRepeatLimit="-1"
+        picker:values="@array/values"
+        picker:dividerSize="10dp"
+        picker:sideItems="1" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_centerInParent="true">
+
+            <Button
+                android:id="@+id/no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:text="X"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textColor="#ffffff"
+                android:background="#ee1c1e"/>
+
+            <Button
+                android:id="@+id/yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:text="V"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textColor="#ffffff"
+                android:background="@color/colorAccent"/>
+
+        </LinearLayout>
+
+</LinearLayout>

@@ -59,24 +59,24 @@
         fab:menu_fab_label="Escolha um  acção ;)">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fazer_o_pedido"
+            android:id="@+id/order"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/colorPrimary"
             fab:fab_colorPressed="@color/colorPrimaryDark"
             fab:fab_colorRipple="@color/colorAccent"
             fab:fab_size="mini"
-            fab:fab_label="Menu item 1" />
+            fab:fab_label="Pedido" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/pedido_ja_feito"
+            android:id="@+id/when"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/colorPrimary"
             fab:fab_colorPressed="@color/colorPrimaryDark"
             fab:fab_colorRipple="@color/colorAccent"
             fab:fab_size="mini"
-            fab:fab_label="Menu item 2" />
+            fab:fab_label="Quando" />
 
     </com.github.clans.fab.FloatingActionMenu>
 

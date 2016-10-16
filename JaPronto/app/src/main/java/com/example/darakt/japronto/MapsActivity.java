@@ -1,21 +1,30 @@
 package com.example.darakt.japronto;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
+import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.example.darakt.japronto.REST.ApiService;
 import com.example.darakt.japronto.REST.models.Area;
 import com.example.darakt.japronto.REST.models.AreaResponse;
+import com.example.darakt.japronto.REST.models.Dish;
+import com.example.darakt.japronto.REST.models.Menu;
+import com.example.darakt.japronto.REST.models.Order;
 import com.example.darakt.japronto.REST.models.User;
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -38,6 +47,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.nearby.connection.Connections;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +58,7 @@ import retrofit2.Response;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        LocationListener
+        LocationListener, MyTimePickerFragment.TimePickerListener, MyDatePickerFragment.DatePickerListener
 {
     private final String TAG = "MapsActivity";
     private ApiService mApiService;
@@ -59,8 +69,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected String mLastUpdateTime ="";
     private static final int REQUEST_LOGIN = 1;
     private static final int GOT_FOOD = 2;
+    private static final int WORKED = 8;
+    private static final int SUMMARY = 16;
+    private static final int NOTWORKED = 13;
+    private static final int CLEAN = 22;
     User user = new User();
-    public HashMap<String,Restaurant> index = new HashMap<String,Restaurant>();
+    private HashMap<String,Restaurant> index = new HashMap<String,Restaurant>();
+    private Order wants = new Order();
+    private String dateFor, timeFor = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +92,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        FloatingActionButton when = (FloatingActionButton) findViewById(R.id.when);
+        when.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                DialogFragment dialogFragment = new MyTimePickerFragment();
+                dialogFragment.show(getSupportFragmentManager(), "datePicker");
+                DialogFragment dialogFr = new MyDatePickerFragment();
+                dialogFr.show(getSupportFragmentManager(), "datePicker");
+            }
+        });
+
+        FloatingActionButton summary = (FloatingActionButton) findViewById(R.id.order);
+        summary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO delete
+                wants.setId_chef(11);
+                wants.getWanted().add(new Dish(4, 11, "prato 4", "","c'est vraiment bon", 1, 12));
+                wants.setFor_the_date("2016-9-28");
+                wants.setFor_the_time("5:20");
+                if (wants.getWanted().getDishes().size() != 0) {
+                    Intent intent = new Intent(MapsActivity.this, Summary.class);
+                    Log.d(TAG, "onClick: " + wants.getWanted().getDishes().size());
+                    intent.putExtra("myOrder", wants);
+                    intent.putExtra("User", user);
+                    startActivityForResult(intent, SUMMARY);
+                }else
+                    Toast.makeText(MapsActivity.this, "Vc precisa de escolher pratos", Toast.LENGTH_LONG).show();
+            }
+        });
 
         Intent intent = new Intent(this, LoginActivity.class);
         startActivityForResult(intent,REQUEST_LOGIN);
@@ -134,47 +182,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mLastLocation = location;
         if (mLastLocation!=null) {
             putRestaurantNear();
-        }else
+        }else {
             Log.d(TAG, "onLocationChanged: holy merde");
-        mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-        Toast.makeText(this, String.valueOf(location.getLatitude()), Toast.LENGTH_SHORT).show();
+            mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+            wants.setLat(Double.toString(location.getLatitude()));
+            wants.setLng(Double.toString(location.getLongitude()));
+        }
     }
 
     protected void onStart() {
         mGoogleApiClient.connect();
         super.onStart();
     }
-/*
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Within {@code onPause()}, we pause location updates, but leave the
-        // connection to GoogleApiClient intact.  Here, we resume receiving
-        // location updates if the user has requested them.
-
-        if (mGoogleApiClient.isConnected()) {
-            startLocationUpdates();
-        }
-        if(mLastLocation != null & mApiService != null) {
-            putRestaurantNear();
-        }else
-            Log.d(TAG, "onResume: holy merde");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
-        if (mGoogleApiClient.isConnected()) {
-            stopLocationUpdates();
-        }
-    }
-
-    protected void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
-    }
-*/
 
     /**
      * Manipulates the map once available.
@@ -196,12 +215,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-
-                Log.d(TAG, "onMarkerClick: It worked");
                 if (index.containsKey(marker.getTitle())) {
                     Restaurant rest = index.get(marker.getTitle());
                     Intent menu = new Intent(MapsActivity.this, MenuDisplay.class);
                     menu.putExtra("myRestaurant", rest);
+                    menu.putExtra("myOrder", wants);
                     startActivityForResult(menu, GOT_FOOD);
                 }else
                     Toast.makeText(MapsActivity.this, "Strange business", Toast.LENGTH_LONG);
@@ -227,14 +245,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 User me = (User) data.getSerializableExtra("user");
                 this.user = me;
                 Log.d(TAG, "onActivityResult: "+mGoogleApiClient.isConnected());
+                wants.setCustomer_pseudo(user.getPseudo());
                 mApiService = ApiManager.createService(ApiService.class, user.getPseudo(), user.getPassword());
                 mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                 if(mLastLocation != null) {
                     putRestaurantNear();
-                    Log.d(TAG, "onActivityResult: cool?");
                 }else
                     Log.d(TAG, "onActivityResult: holy merde");
             }
+
+        } else if (requestCode == GOT_FOOD){
+            if (resultCode == WORKED) {
+                wants = (Order) data.getSerializableExtra("myOrder");
+                for (Dish d : wants.getWanted().getDishes()) {
+                    Log.d(TAG, "onActivityResult: " + d.getName()+"   x  "+d.getNumber());
+                }
+            }
+        } else if (requestCode == SUMMARY ||requestCode == WORKED){
+            if (resultCode == CLEAN)
+                wants = (Order) data.getSerializableExtra("myOrder");
         }
     }
 
@@ -254,6 +283,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mLastLocation = tmp;
             if (mLastLocation != null) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()),15));
+                wants.setLat(Double.toString(mLastLocation.getLatitude()));
+                wants.setLng(Double.toString(mLastLocation.getLongitude()));
                 Log.d(TAG, "onConnected:  "+mLastLocation.toString());
                 Toast.makeText(this, "Location detected!!!!", Toast.LENGTH_SHORT).show();
             } else {
@@ -266,70 +297,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     
     public void putRestaurantNear(){
-        Log.d(TAG, "putRestaurantNear: ");
         if (mLastLocation != null) {
             String lat = Double.toString(mLastLocation.getLatitude());
             String lng = Double.toString(mLastLocation.getLongitude());
             Log.d(TAG, "putRestaurantNear: "+lat+"    "+lng);
-            Call<Area> call = mApiService.getRestNear(lat, lng);
+            Call<List<Area>> call = mApiService.getRestNear(lat, lng);
 
-            call.enqueue(new Callback<Area>() {
+            call.enqueue(new Callback<List<Area>>() {
                 @Override
-                public void onResponse(Call<Area> call, Response<Area> response) {
-                    Area tmp = response.body();
-                    Log.d(TAG, "onResponse: "+tmp.getId());
+                public void onResponse(Call<List<Area>> call, Response<List<Area>> response) {
+                    List<Area> all = response.body();
 
-                    Restaurant rest = new Restaurant(tmp.getChef(), tmp.getMenu());
-                    index.put(tmp.getChef().getPseudo(), rest);
-                    Log.d(TAG, "onResponse: "+index.containsKey(tmp.getChef().getPseudo()));
-                    LatLng xy = new LatLng(tmp.getLati(), tmp.getLngi());
-                    mMap.addMarker(new MarkerOptions()
-                            .position(xy)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                            .title(tmp.getChef().getPseudo()));
-                    /*
-                    if (tmp!=null) {
-                        for (Area ar : tmp) {
-                            LatLng xy = new LatLng(ar.getLati(), ar.getLngi());
-                            mMap.addMarker(new MarkerOptions()
-                                    .position(xy)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                                    .title(Integer.toString(ar.getId())));
-                        }
-                    }else
-                        Toast.makeText(MapsActivity.this, "Nothing found", Toast.LENGTH_LONG).show();
-                        */
+                    for (Area tmp : all) {
+                        Restaurant rest = new Restaurant(tmp.getChef(), tmp.getMenu());
+                        index.put(tmp.getChef().getPseudo(), rest);
+                        LatLng xy = new LatLng(tmp.getLati(), tmp.getLngi());
+                        mMap.addMarker(new MarkerOptions()
+                                .position(xy)
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                                .title(tmp.getChef().getPseudo()));
+                    }
                 }
 
                 @Override
-                public void onFailure(Call<Area> call, Throwable t) {
+                public void onFailure(Call<List<Area>> call, Throwable t) {
                     Log.d(TAG, "onFailure: "+t.getMessage());
                     Log.d(TAG, "onFailure: "+t.getStackTrace());
                 }
             });
         }
-}
-/*
-    @Override
-    public boolean onMarkerClick(final Marker marker) {
-        Log.d(TAG, "onMarkerClick: It worked");
-        if (index.containsKey(marker.getTitle())) {
-            Restaurant rest = index.get(marker.getTitle());
-            Intent menu = new Intent(this, MenuDisplay.class);
-            menu.putExtra("myRestaurant", rest);
-            startActivityForResult(menu, GOT_FOOD);
-        }else
-            Toast.makeText(this, "Strange business", Toast.LENGTH_LONG);
-        return false;
     }
-*/
+
+    @Override
+    public void OnfinshDatePick(String date) {
+        Log.d(TAG, "OnfinshDatePick: "+date);
+        wants.setFor_the_date(date);
+    }
+
+    @Override
+    public void OnfinshTimePick(String time) {
+        Log.d(TAG, "OnfinshTimePick: "+time);
+        wants.setFor_the_time(time);
+    }
+
     @Override
     public void onConnectionFailed(ConnectionResult result) {
         // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
         // onConnectionFailed.
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
     }
-
 
     @Override
     public void onConnectionSuspended(int cause) {
@@ -338,4 +354,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i(TAG, "Connection suspended");
         mGoogleApiClient.connect();
     }
+
+
+
 }

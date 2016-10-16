@@ -3,9 +3,68 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/test"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:background="@color/colorPrimary"
+        >
+
+        <ImageView
+            android:id="@+id/chefImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="center"
+            android:layout_marginLeft="3dp"
+            android:src="@mipmap/logo" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/chefPseudo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pseudo"
+                android:textColor="#ffffff"
+                />
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textColor="#ffffff"
+                />
+
+            <TextView
+                android:id="@+id/chefAVG"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AVG"
+                android:textColor="#ffffff"
+                />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/gridview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnWidth="90dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        android:layout_weight="1"
+        />
 
 </LinearLayout>

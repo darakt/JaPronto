@@ -28,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int REQUEST_SIGNUP = 0;
     User user = new User();
     final Context context = this;
+    ProgressDialog pd;
 
     @BindView(R.id.input_email) EditText _emailText;
     @BindView(R.id.input_password) EditText _passwordText;
@@ -63,13 +64,13 @@ public class LoginActivity extends AppCompatActivity {
         Log.d(TAG, "Login");
         //TODO : del next line
         //onLoginSuccess();
-        final ProgressDialog progressDialog = new ProgressDialog(context);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
+        pd = new ProgressDialog(context);
+        pd.setIndeterminate(true);
+        pd.setMessage("Authenticating...");
+        pd.show();
 
         String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+        final String password = _passwordText.getText().toString();
 
         ApiService apiService = ApiManager.createService(ApiService.class, email, password);
         Call<User> call = apiService.connect(email);
@@ -81,14 +82,13 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getBaseContext(), "success", Toast.LENGTH_LONG).show();
                     Log.d(TAG,Boolean.toString(response.isSuccessful()));
                     User it = response.body();
-                    Log.d(TAG, it.getName());
-                    Log.d(TAG, it.getPseudo());
+                    it.setPassword(password);
                     }
                 new android.os.Handler().postDelayed(
                         new Runnable() {
                             public void run() {
                                 // On complete call either onLoginSuccess or onLoginFailed
-                                progressDialog.dismiss();
+                                pd.dismiss();
                                 if (response.isSuccessful()) {
                                     LoginActivity.this.user = response.body();
                                     Log.d(TAG,"loging successful");
@@ -106,8 +106,9 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                progressDialog.dismiss();
+                pd.dismiss();
                 Toast.makeText(getBaseContext(), "failed", Toast.LENGTH_LONG).show();
+                Log.d(TAG, "onFailure: "+t.getMessage()+"     "+t.getStackTrace());
             }
         });
 

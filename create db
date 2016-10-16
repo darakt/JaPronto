@@ -1,0 +1,99 @@
+create database japronto;
+use japronto;
+
+create table if not exists users (
+	id int not null auto_increment,
+	pseudo varchar(100) not null,
+	password varchar(100) not null,
+	name varchar(100),
+	surname varchar(100),
+	description text,
+	phone varchar(100) not null,
+	mail varchar(100) not null,
+	CPF varchar(100),
+	status bool not null,
+	primary key (id),
+	unique (pseudo)
+);
+
+create table if not exists dishes (
+	id int not null auto_increment,
+	id_chef int not null,
+	name varchar(100) not null,
+	image blob,
+	description text,
+	disponibility bool,
+	num int,
+	primary key ( id ),
+	foreign key (id_chef) references users(id)
+); 
+
+create table if not exists reviews (
+	id int not null auto_increment,
+	id_chef int not null,
+	id_gourmet int not null,
+	id_prato int not null,
+	note int,
+	resume text,
+	primary key ( id ),
+	foreign key (id_chef) references users(id),
+	foreign key (id_prato) references dishes(id),
+	foreign key (id_gourmet) references users(id)
+);
+
+create table if not exists area (
+	id int not null auto_increment,
+	id_chef int,
+	lat decimal(8, 6),
+	lng decimal(9, 6),
+	primary key ( id ),
+	foreign key (id_chef) references users(id)
+);                           
+
+create table if not exists hours (
+	id int not null auto_increment,
+	id_chef int,
+	start time,
+	finish time,
+	active bool,
+	primary key ( id ),
+	foreign key (id_chef) references users(id)
+);  
+
+create table if not exists wants (
+	id int not null auto_increment,
+	id_chef int,
+	for_the_date varchar(100),
+	for_the_time varchar(100),
+	state int,
+	lat decimal(8, 6),
+	lng decimal(9, 6),
+ 	ts timestamp not null default now(),
+	primary key ( id ),
+	foreign key (id_chef) references users(id)
+);   
+
+# for state
+# 1 waiting approval
+# 2 current
+# 3 finished
+# 4 refused
+
+create table if not exists Eat (
+	id int not null auto_increment,
+	id_order int not null,
+	id_dish int not null,
+	numeros int,
+	primary key( id ),
+	foreign key (id_order) references wants(id),
+	foreign key (id_dish) references dishes(id)
+);
+
+create table if not exists clients (
+	id int not null auto_increment,
+	id_order int not null,
+	id_gourmet int not null,
+	primary key( id ),
+	foreign key (id_order) references wants(id),
+	foreign key (id_gourmet) references users(id)
+);

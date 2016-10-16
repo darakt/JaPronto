@@ -13,17 +13,19 @@ public class User implements Serializable{
     String password = "";
     String name = "";
     String surname = "";
+    String description = "";
     String phone = "";
     String mail = "";
     String CPF = "";
     int status = 0;
     private static final long serialVersionUID = 46597646;
 
-    public User(String pseudo, String password, String name, String surname, String phone, String mail, String CPF) {
+    public User(String pseudo, String password, String name, String surname, String description, String phone, String mail, String CPF) {
         this.pseudo = pseudo;
         this.password = password;
         this.name = name;
         this.surname = surname;
+        this.description = description;
         this.phone = phone;
         this.mail = mail;
         this.CPF = CPF;
@@ -38,6 +40,18 @@ public class User implements Serializable{
         this.mail = null;
         this.CPF = null;
         this.status = 1;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getStatus() {
+        return status;
     }
 
     public void setId(int id) {
