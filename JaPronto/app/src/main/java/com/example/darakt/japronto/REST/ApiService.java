@@ -37,4 +37,7 @@ public interface ApiService {
     @POST("japronto/api/order")
     Call<Order> createOrder(@Body Order order);
 
+    @GET("japronto/api/order/{user}")
+    Call<List<Order>> getMyOrders(@Path("user") String user);
+
 }

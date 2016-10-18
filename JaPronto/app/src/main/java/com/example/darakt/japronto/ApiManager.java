@@ -18,7 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiManager {
 
-    public static final String BASE_URL = "http://cccde18d.ngrok.io/";
+    public static final String BASE_URL = "http://4f6ffb47.ngrok.io/";
     public static final String TAG = "ApiManager";
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 

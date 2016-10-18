@@ -1,6 +1,7 @@
 package com.example.darakt.japronto;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ public class Summary extends ListActivity {
     Order myOrder;
     User user;
     ApiService apiService;
+    Context context;
     private static final String TAG = "Summary";
     private static final int CLEAN = 22;
 
@@ -35,7 +37,7 @@ public class Summary extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_summary);
-
+        context = this;
         Intent intent = getIntent();
         myOrder = (Order) intent.getSerializableExtra("myOrder");
         user = (User) intent.getSerializableExtra("User");
@@ -61,6 +63,11 @@ public class Summary extends ListActivity {
                     @Override
                     public void onResponse(Call<Order> call, Response<Order> response) {
                         Log.d(TAG, "onResponse: "+response.body());
+                        myOrder.clean();
+                        Intent toReturn = new Intent();
+                        toReturn.putExtra("myOrder", myOrder);
+                        Summary.this.setResult(CLEAN, toReturn);
+                        finish();
                     }
 
                     @Override
@@ -80,6 +87,7 @@ public class Summary extends ListActivity {
                 Intent toReturn = new Intent();
                 toReturn.putExtra("myOrder", myOrder);
                 setResult(CLEAN, toReturn);
+                finish();
             }
         });
 
@@ -92,6 +100,7 @@ public class Summary extends ListActivity {
                 Intent toReturn = new Intent();
                 toReturn.putExtra("myOrder", myOrder);
                 setResult(CLEAN, toReturn);
+                finish();
             }
         });
 

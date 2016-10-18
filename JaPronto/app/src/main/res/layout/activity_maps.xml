@@ -78,6 +78,16 @@
             fab:fab_size="mini"
             fab:fab_label="Quando" />
 
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/old"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorPressed="@color/colorPrimaryDark"
+            fab:fab_colorRipple="@color/colorAccent"
+            fab:fab_size="mini"
+            fab:fab_label="Resumo dos pedidos" />
+
     </com.github.clans.fab.FloatingActionMenu>
 
 </android.support.design.widget.CoordinatorLayout>

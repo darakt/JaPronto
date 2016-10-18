@@ -1,6 +1,7 @@
 package com.example.darakt.japronto;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +60,7 @@ public class MyAdapterList extends BaseAdapter {
 
         Dish tmp = dishes[position];
         mViewHolder.name.setText(tmp.getName());
-        //mViewHolder.note.setText(tmp.getNumber());
+        mViewHolder.note.setText(Integer.toString(tmp.getNumber()));
         //mViewHolder.it.setImageBitmap(tmp.getImage());
 
         return convertView;

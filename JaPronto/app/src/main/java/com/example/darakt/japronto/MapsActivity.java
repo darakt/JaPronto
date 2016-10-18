@@ -77,6 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private HashMap<String,Restaurant> index = new HashMap<String,Restaurant>();
     private Order wants = new Order();
     private String dateFor, timeFor = "";
+    private Marker deliverHere;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,19 +110,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         summary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO delete
-                wants.setId_chef(11);
-                wants.getWanted().add(new Dish(4, 11, "prato 4", "","c'est vraiment bon", 1, 12));
-                wants.setFor_the_date("2016-9-28");
-                wants.setFor_the_time("5:20");
-                if (wants.getWanted().getDishes().size() != 0) {
+                if (wants.getWanted().getDishes().size() != 0 && wants.getFor_the_date()!=null) {
                     Intent intent = new Intent(MapsActivity.this, Summary.class);
                     Log.d(TAG, "onClick: " + wants.getWanted().getDishes().size());
                     intent.putExtra("myOrder", wants);
                     intent.putExtra("User", user);
                     startActivityForResult(intent, SUMMARY);
-                }else
+                }else if (wants.getWanted().getDishes().size() == 0 && wants.getFor_the_date() ==null)
+                    Toast.makeText(MapsActivity.this, "Vc precisa de escolher pratos, uma data e uma hora de entrega", Toast.LENGTH_LONG).show();
+                else if(wants.getWanted().getDishes().size() == 0)
                     Toast.makeText(MapsActivity.this, "Vc precisa de escolher pratos", Toast.LENGTH_LONG).show();
+                else if (wants.getFor_the_date() == null)
+                    Toast.makeText(MapsActivity.this, "Vc precisa de escolher uma data e uma hora de entrega", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -185,8 +185,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }else {
             Log.d(TAG, "onLocationChanged: holy merde");
             mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-            wants.setLat(Double.toString(location.getLatitude()));
-            wants.setLng(Double.toString(location.getLongitude()));
+            //wants.setLat(Double.toString(location.getLatitude()));
+            //wants.setLng(Double.toString(location.getLongitude()));
         }
     }
 
@@ -240,30 +240,88 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_LOGIN) {
-            if (resultCode == RESULT_OK) {
-                User me = (User) data.getSerializableExtra("user");
-                this.user = me;
-                Log.d(TAG, "onActivityResult: "+mGoogleApiClient.isConnected());
-                wants.setCustomer_pseudo(user.getPseudo());
-                mApiService = ApiManager.createService(ApiService.class, user.getPseudo(), user.getPassword());
-                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                if(mLastLocation != null) {
-                    putRestaurantNear();
-                }else
-                    Log.d(TAG, "onActivityResult: holy merde");
-            }
+        switch (requestCode) {
+            case REQUEST_LOGIN: {
+                if (resultCode == RESULT_OK) {
+                    User me = (User) data.getSerializableExtra("user");
+                    this.user = me;
+                    Log.d(TAG, "onActivityResult: " + mGoogleApiClient.isConnected());
+                    wants.setCustomer_pseudo(user.getPseudo());
+                    mApiService = ApiManager.createService(ApiService.class, user.getPseudo(), user.getPassword());
+                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    if (mLastLocation != null) {
+                        putRestaurantNear();
+                    } else
+                        Log.d(TAG, "onActivityResult: holy merde");
 
-        } else if (requestCode == GOT_FOOD){
-            if (resultCode == WORKED) {
-                wants = (Order) data.getSerializableExtra("myOrder");
-                for (Dish d : wants.getWanted().getDishes()) {
-                    Log.d(TAG, "onActivityResult: " + d.getName()+"   x  "+d.getNumber());
+                    FloatingActionButton old = (FloatingActionButton) findViewById(R.id.old);
+                    old.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Call<List<Order>> call = mApiService.getMyOrders(user.getPseudo());
+                            call.enqueue(new Callback<List<Order>>() {
+                                @Override
+                                public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
+                                    List<Order> all = response.body();
+                                    Intent intent = new Intent(MapsActivity.this, ListOrder.class);
+                                    Order[] o = all.toArray(new Order[all.size()]);
+                                    intent.putExtra("orders", o);
+                                    intent.putExtra("size", all.size());
+                                    Log.d(TAG, "onResponse: " + o[0].getCustomer_pseudo());
+                                    Log.d(TAG, "onResponse: List");
+                                    /*
+                                    for(Order opa : all){
+                                        Menu tmp = opa.getWanted();
+                                        Dish[] tp = tmp.convertToArray();
+                                        int i=0;
+                                        for (Dish d : tmp.getDishes()){
+                                            Log.d(TAG, "Menu: "+d.getName());
+                                            Log.d(TAG, "Array: "+tp[i].getName());
+                                            i=+1;
+                                        }
+                                    }
+                                    Log.d(TAG, "onResponse: Array");
+
+                                    for( int j=0; j<o.length; j++){
+                                        Menu tmp = o[j].getWanted();
+                                        Dish[] tp = tmp.convertToArray();
+                                        int i=0;
+                                        for (Dish d : tmp.getDishes()){
+                                            Log.d(TAG, "Menu: "+d.getName());
+                                            Log.d(TAG, "Array: "+tp[i].getName());
+                                            i=+1;
+                                        }
+                                    }*/
+                                    startActivity(intent);
+                                }
+
+                                @Override
+                                public void onFailure(Call<List<Order>> call, Throwable t) {
+                                    Log.d(TAG, "onFailure: " + t.getMessage());
+                                }
+                            });
+
+                        }
+                    });
+
                 }
+
             }
-        } else if (requestCode == SUMMARY ||requestCode == WORKED){
-            if (resultCode == CLEAN)
-                wants = (Order) data.getSerializableExtra("myOrder");
+            break;
+            case GOT_FOOD:
+                if (resultCode == WORKED) {
+                    wants = (Order) data.getSerializableExtra("myOrder");
+                    for (Dish d : wants.getWanted().getDishes()) {
+                        Log.d(TAG, "onActivityResult: " + d.getName() + "   x  " + d.getNumber());
+                    }
+                }
+            break;
+            case SUMMARY:
+                if (resultCode == CLEAN) {
+                    wants = (Order) data.getSerializableExtra("myOrder");
+
+                }
+                break;
         }
     }
 
@@ -285,6 +343,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()),15));
                 wants.setLat(Double.toString(mLastLocation.getLatitude()));
                 wants.setLng(Double.toString(mLastLocation.getLongitude()));
+                deliverHere =  mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()))
+                                            .title("Entregar aqui!")
+                                            .draggable(true)
+                                            .icon(BitmapDescriptorFactory.defaultMarker(336))
+                                            .snippet("Snippet"));
+                mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                    @Override
+                    public void onMarkerDragStart(Marker marker) {
+                    }
+
+                    @Override
+                    public void onMarkerDrag(Marker marker) {
+                    }
+
+                    @Override
+                    public void onMarkerDragEnd(Marker marker) {
+                        Log.d(TAG, "onMarkerDragEnd: "+marker.getPosition());
+                        wants.setLat(Double.toString(marker.getPosition().latitude));
+                        wants.setLng(Double.toString(marker.getPosition().longitude));
+                    }
+                });
+                deliverHere.showInfoWindow();
                 Log.d(TAG, "onConnected:  "+mLastLocation.toString());
                 Toast.makeText(this, "Location detected!!!!", Toast.LENGTH_SHORT).show();
             } else {
@@ -314,8 +395,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         LatLng xy = new LatLng(tmp.getLati(), tmp.getLngi());
                         mMap.addMarker(new MarkerOptions()
                                 .position(xy)
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                                .title(tmp.getChef().getPseudo()));
+                                .icon(BitmapDescriptorFactory.defaultMarker(101))
+                                .title(tmp.getChef().getPseudo())).showInfoWindow();
                     }
                 }
 
@@ -354,7 +435,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i(TAG, "Connection suspended");
         mGoogleApiClient.connect();
     }
-
-
-
 }

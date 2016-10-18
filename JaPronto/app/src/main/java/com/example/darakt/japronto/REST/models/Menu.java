@@ -13,6 +13,10 @@ public class Menu implements Serializable{
     List<Dish> dishes;
     private static final long serialVersionUID = 465948746;
 
+    public void clean(){
+        dishes = new ArrayList<Dish>();
+    }
+
     public List<Dish> getDishes() {
         return dishes;
     }

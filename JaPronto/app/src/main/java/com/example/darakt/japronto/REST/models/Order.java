@@ -18,11 +18,21 @@ public class Order implements Serializable {
     int id_chef = 0;
     Menu wanted = new Menu();
     Date for_the;
-    String for_the_date, for_the_time = "";
+    String for_the_date, for_the_time = null;
     int state = 0;
-    public String lat = "";
-    public String lng = "";
+    public String lat = null;
+    public String lng = null;
     private static final long serialVersionUID = 465907646;
+
+    public void clean(){
+        id_chef = 0;
+        wanted.clean();
+        for_the_date = null;
+        for_the_time = null;
+        state = 0;
+        //lat = "";
+        //lng ="";
+    }
 
     public Menu getWanted() {
         return wanted;

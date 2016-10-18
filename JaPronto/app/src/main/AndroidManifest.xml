@@ -80,6 +80,18 @@
             </meta-data>
         </activity>
 
+        <activity android:name=".ListOrder" android:parentActivityName="com.example.darakt.japronto.MapsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY" android:value=".MapsActivity">
+            </meta-data>
+        </activity>
+
+        <activity android:name=".ListOldDish" android:parentActivityName="com.example.darakt.japronto.ListOrder">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY" android:value=".ListOrder">
+            </meta-data>
+        </activity>
+
     </application>
 
 </manifest>
