@@ -1,4 +1,4 @@
-package com.example.darakt.japronto;
+package com.example.darakt.japronto.order;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -27,7 +27,7 @@ public class MyDatePickerFragment extends DialogFragment implements DatePickerDi
         final int day = now.get(Calendar.DAY_OF_MONTH),
                 month = now.get(Calendar.MONTH),
                 year = now.get(Calendar.YEAR);
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        return new DatePickerDialog(getActivity(), android.R.style.Theme_Material_Light_Dialog_NoActionBar, this, year, month, day);
     }
 
     /**

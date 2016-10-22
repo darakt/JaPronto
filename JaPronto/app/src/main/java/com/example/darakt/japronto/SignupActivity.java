@@ -15,7 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.darakt.japronto.REST.ApiService;
-import com.example.darakt.japronto.REST.models.User;
+import com.example.darakt.japronto.REST.ApiManager;
+import com.example.darakt.japronto.REST.models.Client;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,7 +26,7 @@ import retrofit2.Response;
 
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
-    public User user = new User();
+    public Client client = new Client();
 
     @BindView(R.id.input_name)
     EditText _nameText;
@@ -99,22 +100,22 @@ public class SignupActivity extends AppCompatActivity {
         String pseudo = _pseudo.getText().toString();
         String phone = _phone.getText().toString();
 
-        this.user = new User(pseudo, password, name, surname,"", phone, email, cpf);
+        this.client = new Client(pseudo, password, name, surname, phone, email, cpf);
 
         ApiService apiService = ApiManager.createService(ApiService.class);
 
-        Call<User> call = apiService.createUser(user);
+        Call<Client> call = apiService.createUser(client);
 
-        call.enqueue(new Callback<User>() {
+        call.enqueue(new Callback<Client>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                Log.d(TAG, "inside the thread, id of the new user");
-                SignupActivity.this.user.setId(response.body().getId());
-                Log.d(TAG, Integer.toString(SignupActivity.this.user.getId()));
+            public void onResponse(Call<Client> call, Response<Client> response) {
+                Log.d(TAG, "inside the thread, id of the new client");
+                SignupActivity.this.client.setId(response.body().getId());
+                Log.d(TAG, Integer.toString(SignupActivity.this.client.getId()));
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<Client> call, Throwable t) {
 
             }
         });
@@ -135,7 +136,7 @@ public class SignupActivity extends AppCompatActivity {
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
         Intent data = new Intent();
-        data.putExtra("user", this.user);
+        data.putExtra("client", this.client);
         setResult(RESULT_OK, data);
         finish();
     }

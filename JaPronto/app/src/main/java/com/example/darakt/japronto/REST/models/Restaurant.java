@@ -1,8 +1,4 @@
-package com.example.darakt.japronto;
-
-import com.example.darakt.japronto.REST.models.Dish;
-import com.example.darakt.japronto.REST.models.User;
-import com.example.darakt.japronto.REST.models.UsersResponse;
+package com.example.darakt.japronto.REST.models;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,19 +9,19 @@ import java.util.Vector;
  */
 
 public class Restaurant  implements Serializable{
-    public User chef= new User();
+    public Chef chef= new Chef();
     public List<Dish> menu = new Vector<Dish>();
 
-    public Restaurant(User chef, List<Dish> menu) {
+    public Restaurant(Chef chef, List<Dish> menu) {
         this.chef = chef;
         this.menu = menu;
     }
 
-    public User getChef() {
+    public Chef getChef() {
         return chef;
     }
 
-    public void setChef(User chef) {
+    public void setChef(Chef chef) {
         this.chef = chef;
     }
 

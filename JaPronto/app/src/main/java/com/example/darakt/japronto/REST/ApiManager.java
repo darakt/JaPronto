@@ -1,4 +1,5 @@
-package com.example.darakt.japronto;
+package com.example.darakt.japronto.REST;
+
 
 import android.util.Base64;
 import android.util.Log;
@@ -16,9 +17,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by darakt on 20/09/16.
  */
 
-public class ApiManager {
+public class  ApiManager {
 
-    public static final String BASE_URL = "http://4f6ffb47.ngrok.io/";
+    public static final String BASE_URL = "http://00d879f1.ngrok.io/";
     public static final String TAG = "ApiManager";
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
@@ -62,13 +63,11 @@ public class ApiManager {
 
     /* second version
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(httpClient.build());
-
     public static <S> S createService(Class<S> serviceClass) {
         Retrofit retrofit = builder.client(httpClient.build()).build();
         return retrofit.create(serviceClass);
@@ -76,8 +75,6 @@ public class ApiManager {
     */
     /* first version
     private static Retrofit retrofit = null;
-
-
     public static Retrofit getClient() {
         if (retrofit==null) {
             retrofit = new Retrofit.Builder()

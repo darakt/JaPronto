@@ -1,9 +1,12 @@
-package com.example.darakt.japronto;
+package com.example.darakt.japronto.historic;
 
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
+import com.example.darakt.japronto.adapter.MyAdapterList;
+import com.example.darakt.japronto.R;
 import com.example.darakt.japronto.REST.models.Dish;
 import com.example.darakt.japronto.REST.models.Menu;
 import com.example.darakt.japronto.REST.models.Order;
@@ -34,6 +37,7 @@ public class ListOldDish extends ListActivity{
         adapter = new MyAdapterList(this, order.getWanted().convertToArray());
         setListAdapter(adapter);
 
-
+        TextView total = (TextView) findViewById(R.id.totalR);
+        total.setText(Integer.toString(order.getTotal()));
     }
 }

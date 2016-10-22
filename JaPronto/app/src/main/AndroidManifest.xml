@@ -41,7 +41,7 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTop">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -62,33 +62,33 @@
             </meta-data>
         </activity>
 
-        <activity android:name=".MenuDisplay" android:parentActivityName="com.example.darakt.japronto.MapsActivity">
+        <activity android:name=".order.MenuDisplay" android:parentActivityName="com.example.darakt.japronto.MapsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY" android:value=".MapsActivity">
             </meta-data>
         </activity>
 
-        <activity android:name=".DishDisplay" android:parentActivityName="com.example.darakt.japronto.MapsActivity">
+        <activity android:name=".order.DishDisplay" android:parentActivityName="com.example.darakt.japronto.MapsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY" android:value=".MapsActivity">
             </meta-data>
         </activity>
 
-        <activity android:name=".Summary" android:parentActivityName="com.example.darakt.japronto.MapsActivity">
+        <activity android:name=".order.Summary" android:parentActivityName="com.example.darakt.japronto.MapsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY" android:value=".MapsActivity">
             </meta-data>
         </activity>
 
-        <activity android:name=".ListOrder" android:parentActivityName="com.example.darakt.japronto.MapsActivity">
+        <activity android:name=".historic.ListOrder" android:parentActivityName="com.example.darakt.japronto.MapsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY" android:value=".MapsActivity">
             </meta-data>
         </activity>
 
-        <activity android:name=".ListOldDish" android:parentActivityName="com.example.darakt.japronto.ListOrder">
+        <activity android:name=".historic.ListOldDish" android:parentActivityName="com.example.darakt.japronto.historic.ListOrder">
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY" android:value=".ListOrder">
+                android:name="android.support.PARENT_ACTIVITY" android:value=".historic.ListOrder">
             </meta-data>
         </activity>
 

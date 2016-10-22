@@ -19,10 +19,12 @@ public class Dish implements Serializable{
     String description="";
     int disponibility;
     int number = 0;
+    int max = 0;
+    int price = 0;
     private static final long serialVersionUID = 465997646;
 
 
-    public Dish(int id, int id_chef, String name, String image, String description, int disponibility, int number) {
+    public Dish(int id, int id_chef, String name, String image, String description, int disponibility, int number, int max, int price) {
         this.id = id;
         this.id_chef = id_chef;
         this.name = name;
@@ -30,6 +32,8 @@ public class Dish implements Serializable{
         this.description = description;
         this.disponibility = disponibility;
         this.number = number;
+        this.max = max;
+        this.price = price;
     }
 
     public Dish(Dish dish){
@@ -39,7 +43,30 @@ public class Dish implements Serializable{
         this.image = dish.image;
         this.description = dish.description;
         this.disponibility = dish.disponibility;
-        this.number = 0;
+        this.number = dish.number;
+        this.max = dish.max;
+        this.price = dish.price;
+    }
+
+    public int getMax() {
+        return max;
+    }
+
+    public void setMax(int max) {
+        this.max = max;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public String getURL(){
+        String url = "http://a9a09068.ngrok.io/japronto/api/img/".concat(image);
+        return url;
     }
 
     public int getId() {

@@ -1,53 +1,44 @@
 package com.example.darakt.japronto;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.example.darakt.japronto.REST.ApiService;
+import com.example.darakt.japronto.REST.ApiManager;
 import com.example.darakt.japronto.REST.models.Area;
-import com.example.darakt.japronto.REST.models.AreaResponse;
+import com.example.darakt.japronto.REST.models.Client;
 import com.example.darakt.japronto.REST.models.Dish;
-import com.example.darakt.japronto.REST.models.Menu;
 import com.example.darakt.japronto.REST.models.Order;
-import com.example.darakt.japronto.REST.models.User;
+import com.example.darakt.japronto.REST.models.Restaurant;
+import com.example.darakt.japronto.historic.ListOrder;
+import com.example.darakt.japronto.order.MenuDisplay;
+import com.example.darakt.japronto.order.MyDatePickerFragment;
+import com.example.darakt.japronto.order.MyTimePickerFragment;
+import com.example.darakt.japronto.order.Summary;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.nearby.connection.Connections;
 
 import java.text.DateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -73,7 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int SUMMARY = 16;
     private static final int NOTWORKED = 13;
     private static final int CLEAN = 22;
-    User user = new User();
+    Client client = new Client();
     private HashMap<String,Restaurant> index = new HashMap<String,Restaurant>();
     private Order wants = new Order();
     private String dateFor, timeFor = "";
@@ -112,9 +103,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 if (wants.getWanted().getDishes().size() != 0 && wants.getFor_the_date()!=null) {
                     Intent intent = new Intent(MapsActivity.this, Summary.class);
-                    Log.d(TAG, "onClick: " + wants.getWanted().getDishes().size());
                     intent.putExtra("myOrder", wants);
-                    intent.putExtra("User", user);
+                    intent.putExtra("Client", client);
                     startActivityForResult(intent, SUMMARY);
                 }else if (wants.getWanted().getDishes().size() == 0 && wants.getFor_the_date() ==null)
                     Toast.makeText(MapsActivity.this, "Vc precisa de escolher pratos, uma data e uma hora de entrega", Toast.LENGTH_LONG).show();
@@ -200,8 +190,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
      * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * If Google Play services is not installed on the device, the client will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the client has
      * installed Google Play services and returned to the app.
      */
     @Override
@@ -220,6 +210,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Intent menu = new Intent(MapsActivity.this, MenuDisplay.class);
                     menu.putExtra("myRestaurant", rest);
                     menu.putExtra("myOrder", wants);
+                    Log.d(TAG, "onMarkerClick: "+rest.getMenu().get(0).getName());
                     startActivityForResult(menu, GOT_FOOD);
                 }else
                     Toast.makeText(MapsActivity.this, "Strange business", Toast.LENGTH_LONG);
@@ -243,11 +234,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         switch (requestCode) {
             case REQUEST_LOGIN: {
                 if (resultCode == RESULT_OK) {
-                    User me = (User) data.getSerializableExtra("user");
-                    this.user = me;
+                    Client me = (Client) data.getSerializableExtra("client");
+                    this.client = me;
                     Log.d(TAG, "onActivityResult: " + mGoogleApiClient.isConnected());
-                    wants.setCustomer_pseudo(user.getPseudo());
-                    mApiService = ApiManager.createService(ApiService.class, user.getPseudo(), user.getPassword());
+                    wants.setCustomer_pseudo(client.getPseudo());
+                    mApiService = ApiManager.createService(ApiService.class, client.getPseudo(), client.getPassword());
                     mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                     if (mLastLocation != null) {
                         putRestaurantNear();
@@ -258,40 +249,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     old.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Call<List<Order>> call = mApiService.getMyOrders(user.getPseudo());
+                            Call<List<Order>> call = mApiService.getMyOrders(client.getPseudo());
                             call.enqueue(new Callback<List<Order>>() {
                                 @Override
                                 public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
                                     List<Order> all = response.body();
+                                    Log.d(TAG, "onResponse: "+ all.get(0).getWanted().getDishes().get(0).getNumber());
                                     Intent intent = new Intent(MapsActivity.this, ListOrder.class);
                                     Order[] o = all.toArray(new Order[all.size()]);
                                     intent.putExtra("orders", o);
                                     intent.putExtra("size", all.size());
                                     Log.d(TAG, "onResponse: " + o[0].getCustomer_pseudo());
                                     Log.d(TAG, "onResponse: List");
-                                    /*
-                                    for(Order opa : all){
-                                        Menu tmp = opa.getWanted();
-                                        Dish[] tp = tmp.convertToArray();
-                                        int i=0;
-                                        for (Dish d : tmp.getDishes()){
-                                            Log.d(TAG, "Menu: "+d.getName());
-                                            Log.d(TAG, "Array: "+tp[i].getName());
-                                            i=+1;
-                                        }
-                                    }
-                                    Log.d(TAG, "onResponse: Array");
-
-                                    for( int j=0; j<o.length; j++){
-                                        Menu tmp = o[j].getWanted();
-                                        Dish[] tp = tmp.convertToArray();
-                                        int i=0;
-                                        for (Dish d : tmp.getDishes()){
-                                            Log.d(TAG, "Menu: "+d.getName());
-                                            Log.d(TAG, "Array: "+tp[i].getName());
-                                            i=+1;
-                                        }
-                                    }*/
                                     startActivity(intent);
                                 }
 
@@ -347,8 +316,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             .position(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()))
                                             .title("Entregar aqui!")
                                             .draggable(true)
-                                            .icon(BitmapDescriptorFactory.defaultMarker(336))
-                                            .snippet("Snippet"));
+                                            .icon(BitmapDescriptorFactory.defaultMarker(336)));
                 mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                     @Override
                     public void onMarkerDragStart(Marker marker) {
@@ -367,7 +335,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
                 deliverHere.showInfoWindow();
                 Log.d(TAG, "onConnected:  "+mLastLocation.toString());
-                Toast.makeText(this, "Location detected!!!!", Toast.LENGTH_SHORT).show();
             } else {
                 Log.d(TAG, "onConnected: fuck");
                 Toast.makeText(this, "No location detected", Toast.LENGTH_SHORT).show();
@@ -388,7 +355,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 public void onResponse(Call<List<Area>> call, Response<List<Area>> response) {
                     List<Area> all = response.body();
-
                     for (Area tmp : all) {
                         Restaurant rest = new Restaurant(tmp.getChef(), tmp.getMenu());
                         index.put(tmp.getChef().getPseudo(), rest);
@@ -396,7 +362,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         mMap.addMarker(new MarkerOptions()
                                 .position(xy)
                                 .icon(BitmapDescriptorFactory.defaultMarker(101))
-                                .title(tmp.getChef().getPseudo())).showInfoWindow();
+                                .title(tmp.getChef().getPseudo()));
                     }
                 }
 

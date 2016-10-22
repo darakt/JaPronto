@@ -14,7 +14,8 @@ public class Area implements Serializable{
     public String lat = "";
     public String lng = "";
     public String distance = "";
-    public User chef = new User();
+    public Chef chef = new Chef();
+    public List<Dish> menu = new Vector<Dish>();
     private static final long serialVersionUID = 465007646;
 
     public List<Dish> getMenu() {
@@ -29,18 +30,15 @@ public class Area implements Serializable{
         this.lng = lng;
     }
 
-    public User getChef() {
+    public Chef getChef() {
         return chef;
     }
 
-    public void setChef(User chef) {
+    public void setChef(Chef chef) {
         this.chef = chef;
     }
 
-    public List<Dish> menu = new Vector<Dish>();
-
-
-    public int getId() {
+     public int getId() {
         return id;
     }
 

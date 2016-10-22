@@ -1,4 +1,4 @@
-package com.example.darakt.japronto;
+package com.example.darakt.japronto.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,12 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.darakt.japronto.R;
 import com.example.darakt.japronto.REST.models.Dish;
 import com.example.darakt.japronto.REST.models.Menu;
 import com.example.darakt.japronto.REST.models.Order;
+import com.example.darakt.japronto.historic.ListOldDish;
 
 /**
  * Created by darakt on 17/10/16.
@@ -26,15 +27,10 @@ public class MyAdapterOld  extends BaseAdapter {
     final String TAG = "MyAdapterOld";
 
     private class MyViewHolder{
-        TextView name, lat, lng, state, date, time;
+        TextView response;
 
         public MyViewHolder(View view){
-            name = (TextView) view.findViewById(R.id.nameC);
-            lat = (TextView) view.findViewById( R.id.lat);
-            lng = (TextView) view.findViewById(R.id.lng);
-            state = (TextView) view.findViewById(R.id.state);
-            date = (TextView) view.findViewById(R.id.date);
-            time = (TextView) view.findViewById(R.id.time);
+            response = (TextView) view.findViewById(R.id.response);
         }
     }
 
@@ -50,6 +46,8 @@ public class MyAdapterOld  extends BaseAdapter {
             for (Dish d : tmp.getDishes()){
                 Log.d(TAG, "Menu: "+d.getName());
                 Log.d(TAG, "Array: "+tp[i].getName());
+                Log.d(TAG, "MyAdapterOld: "+tp[i].getNumber());
+                Log.d(TAG, "MyAdapterOld: "+tp[i].getPrice());
                 i=+1;
             }
         }
@@ -94,15 +92,18 @@ public class MyAdapterOld  extends BaseAdapter {
         }
         final int pos = position;
         Order tmp = wanted[position];
-        Log.d(TAG, "getView: "+ tmp.getId_chef());
-        mViewHolder.name.setText(Integer.toString(tmp.getId_chef()));
-        mViewHolder.lat.setText(tmp.getLat());
-        mViewHolder.lng.setText(tmp.getLng());
-        mViewHolder.state.setText(Integer.toString(tmp.getState()));
-        mViewHolder.date.setText(tmp.getFor_the_date());
-        mViewHolder.time.setText(tmp.getFor_the_time());
-        //mViewHolder.note.setText(tmp.getNumber());
-        //mViewHolder.it.setImageBitmap(tmp.getImage());
+        String state = null;
+        switch (tmp.getState()) {
+            case 0: state = "esperando approvação";
+                break;
+            case 1: state = "aceitada, espera a entrega";
+                break;
+            case 2: state = "ja entregada";
+                break;
+            case 3: state = "ja recusada";
+        }
+        String response = String.format("O pedido numero %d do chefe %s está %s, é para o %s a %s, nessa posição GPS (%s,%s)", tmp.getId(), tmp.getChef().getPseudo(), state, tmp.getFor_the_date(), tmp.getFor_the_time(), tmp.getLat(), tmp.getLng());
+        mViewHolder.response.setText(response);
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override

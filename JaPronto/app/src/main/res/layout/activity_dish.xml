@@ -17,28 +17,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textColor="#ff0000"/>
+        android:textColor="@color/colorPrimaryDark"/>
 
     <TextView
         android:id="@+id/DishDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textColor="#ff0000"/>
+        android:textColor="@color/colorPrimaryDark"/>
 
-    <TextView
-        android:id="@+id/Dishavg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="#ff0000"/>
+
 
     <com.wefika.horizontalpicker.HorizontalPicker
         xmlns:picker="http://schemas.android.com/apk/res/com.example.darakt.japronto"
         android:id="@+id/picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#000000"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="22sp"
         android:ellipsize="none"
         android:marqueeRepeatLimit="-1"
@@ -79,5 +74,12 @@
                 android:background="@color/colorAccent"/>
 
         </LinearLayout>
+
+    <TextView
+        android:id="@+id/total"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#ff0000"/>
 
 </LinearLayout>

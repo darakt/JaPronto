@@ -14,7 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.darakt.japronto.REST.ApiService;
-import com.example.darakt.japronto.REST.models.User;
+import com.example.darakt.japronto.REST.ApiManager;
+import com.example.darakt.japronto.REST.models.Client;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,7 +27,7 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
-    User user = new User();
+    Client client = new Client();
     final Context context = this;
     ProgressDialog pd;
 
@@ -71,15 +72,15 @@ public class LoginActivity extends AppCompatActivity {
         final String password = _passwordText.getText().toString();
 
         ApiService apiService = ApiManager.createService(ApiService.class, email, password);
-        Call<User> call = apiService.connect(email);
+        Call<Client> call = apiService.connect(email);
 
-        call.enqueue(new Callback<User>() {
+        call.enqueue(new Callback<Client>() {
             @Override
-            public void onResponse(Call<User> call, final Response<User> response) {
+            public void onResponse(Call<Client> call, final Response<Client> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(getBaseContext(), "success", Toast.LENGTH_LONG).show();
                     Log.d(TAG,Boolean.toString(response.isSuccessful()));
-                    User it = response.body();
+                    Client it = response.body();
                     it.setPassword(password);
                     }
                 new android.os.Handler().postDelayed(
@@ -88,10 +89,10 @@ public class LoginActivity extends AppCompatActivity {
                                 // On complete call either onLoginSuccess or onLoginFailed
                                 pd.dismiss();
                                 if (response.isSuccessful()) {
-                                    LoginActivity.this.user = response.body();
+                                    LoginActivity.this.client = response.body();
                                     Log.d(TAG,"loging successful");
-                                    Log.d(TAG, user.getName());
-                                    Log.d(TAG, user.getPseudo());
+                                    Log.d(TAG, client.getName());
+                                    Log.d(TAG, client.getPseudo());
                                     onLoginSuccess();
                                 }else{
                                     Toast.makeText(getBaseContext(), "failed", Toast.LENGTH_LONG).show();
@@ -103,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<Client> call, Throwable t) {
                 pd.dismiss();
                 Toast.makeText(getBaseContext(), "failed", Toast.LENGTH_LONG).show();
                 Log.d(TAG, "onFailure: "+t.getMessage()+"     "+t.getStackTrace());
@@ -117,9 +118,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
-                this.user = (User) data.getSerializableExtra("user");
+                this.client = (Client) data.getSerializableExtra("client");
                 Intent toReturn = new Intent();
-                toReturn.putExtra("user", this.user);
+                toReturn.putExtra("client", this.client);
                 setResult(RESULT_OK, toReturn);
                 this.finish();
             }
@@ -135,7 +136,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
         Intent toReturn = new Intent();
-        toReturn.putExtra("user", this.user);
+        toReturn.putExtra("client", this.client);
         setResult(RESULT_OK, toReturn);
         finish();
     }

@@ -7,31 +7,27 @@ import java.io.Serializable;
  */
 
 
-public class User implements Serializable{
+public class Client implements Serializable{
     int id = 0;
     String pseudo = "";
     String password = "";
     String name = "";
     String surname = "";
-    String description = "";
     String phone = "";
     String mail = "";
     String CPF = "";
-    int status = 0;
     private static final long serialVersionUID = 46597646;
 
-    public User(String pseudo, String password, String name, String surname, String description, String phone, String mail, String CPF) {
+    public Client(String pseudo, String password, String name, String surname, String phone, String mail, String CPF) {
         this.pseudo = pseudo;
         this.password = password;
         this.name = name;
         this.surname = surname;
-        this.description = description;
         this.phone = phone;
         this.mail = mail;
         this.CPF = CPF;
-        this.status = 1;
     }
-    public User(){
+    public Client(){
         this.pseudo = null;
         this.password = null;
         this.name = null;
@@ -39,19 +35,6 @@ public class User implements Serializable{
         this.phone = null;
         this.mail = null;
         this.CPF = null;
-        this.status = 1;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getStatus() {
-        return status;
     }
 
     public void setId(int id) {
@@ -88,10 +71,6 @@ public class User implements Serializable{
         return CPF;
     }
 
-    public int getstatus() {
-        return status;
-    }
-
     public void setPseudo(String pseudo) {
         this.pseudo = pseudo;
     }
@@ -118,9 +97,5 @@ public class User implements Serializable{
 
     public void setCPF(String CPF) {
         this.CPF = CPF;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 }

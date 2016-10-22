@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">JaPronto</string>
     <string name="title_activity_maps">Map</string>
+    <string name="url">http://00d879f1.ngrok.io/japronto/api/img/</string>
 
     <string-array name="values">
         <item>0</item>

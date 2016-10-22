@@ -1,6 +1,7 @@
-package com.example.darakt.japronto;
+package com.example.darakt.japronto.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.example.darakt.japronto.R;
 import com.example.darakt.japronto.REST.models.Dish;
+
 
 /**
  * Created by darakt on 12/10/16.
@@ -45,6 +49,7 @@ public class MyAdapterGrid extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d(TAG, "getView: ");
         MyViewHolder mViewHolder;
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.activity_grid_item, parent, false);
@@ -56,20 +61,21 @@ public class MyAdapterGrid extends BaseAdapter {
 
         Dish tmp = dishes[position];
         mViewHolder.name.setText(tmp.getName());
-        mViewHolder.note.setText("8/10");
-        //mViewHolder.it.setImageBitmap(tmp.getImage());
+        mViewHolder.price.setText(Integer.toString(tmp.getPrice())+" R$");
+        Glide.with(context).load(context.getResources().getString(R.string.url).concat(tmp.getImage())).into(mViewHolder.it);
 
         return convertView;
     }
 
     private class MyViewHolder{
-        TextView name, note;
+        TextView name, price;
         ImageView it;
 
         public MyViewHolder(View view){
             name = (TextView) view.findViewById(R.id.nameDish);
-            note = (TextView) view.findViewById(R.id.avg);
             it = (ImageView) view.findViewById(R.id.image);
+            price = (TextView) view.findViewById(R.id.priceDish);
+
         }
     }
 }

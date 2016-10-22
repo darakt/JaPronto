@@ -14,24 +14,50 @@ import java.util.List;
  */
 
 public class Order implements Serializable {
-    String customer_pseudo = "" ;
+    int id = 0;
     int id_chef = 0;
+    String customer_pseudo = "" ;
+    Chef chef = new Chef();
     Menu wanted = new Menu();
     Date for_the;
     String for_the_date, for_the_time = null;
     int state = 0;
-    public String lat = null;
-    public String lng = null;
+    String lat = null;
+    String lng = null;
+    int total = 0;
     private static final long serialVersionUID = 465907646;
 
     public void clean(){
-        id_chef = 0;
         wanted.clean();
         for_the_date = null;
         for_the_time = null;
         state = 0;
         //lat = "";
         //lng ="";
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public Chef getChef() {
+        return chef;
+    }
+
+    public void setChef(Chef chef) {
+        this.chef = chef;
     }
 
     public Menu getWanted() {

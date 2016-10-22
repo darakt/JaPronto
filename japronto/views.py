@@ -2,7 +2,7 @@
 
 from .__init__ import app
 #from .models import Users, Wants,Clients, Eat
-from flask import jsonify, request, Response
+from flask import jsonify, request, Response, send_from_directory
 #from sqlalchemy import text
 from functools import wraps
 import base64
@@ -22,7 +22,7 @@ def check_auth(username, password):
                      passwd="root",  # your password
                      db="japronto")        # name of the data base
     cur = db.cursor()
-    cur.execute("select pseudo, password from users where users.pseudo = '%s' " % username)
+    cur.execute("select pseudo, password from client where client.pseudo = '%s' " % username)
     dude = cur.fetchone()
     print dude
     if dude is None:
@@ -61,7 +61,7 @@ def connect(user):
                      passwd="root",  # your password
                      db="japronto")        # name of the data base
     cur = db.cursor()
-    cur.execute("select id, pseudo, password, name from users where pseudo = '%s'" %user)
+    cur.execute("select id, pseudo, password, name from client where pseudo = '%s'" %user)
     dude = cur.fetchone()
     db.close()
     return jsonify(id = dude[0], pseudo = dude[1], name=dude[2])
@@ -76,7 +76,7 @@ def signup():
                      passwd="root",  # your password
                      db="japronto")        # name of the data base
     cur = db.cursor()
-    sql = "insert into users values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d'" % (user['pseudo'], user['password'], user['name'], user['surname'], user['phone'], user['mail'], user['CPF'], int(user['status']))
+    sql = "insert into client values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d'" % (user['pseudo'], user['password'], user['name'], user['surname'], user['phone'], user['mail'], user['CPF'])
     
     try:
         cur.execute(sql)
@@ -91,6 +91,9 @@ def signup():
 def not_found(error):
     return "404 error",404
 
+@app.route('/japronto/api/img/<string:filename>')
+def send_pic(filename):
+    return send_from_directory('/home/darakt/JaPronto/tmp', filename)
 
 @app.route('/japronto/api/foods/', methods=['GET'])
 def get_food():
@@ -106,10 +109,10 @@ def get_order(user):
                      passwd="root",  
                      db="japronto")  
     cur = db.cursor()
-    cur.execute("select id, pseudo, password from users where users.pseudo = '%s' " % user)
+    cur.execute("select id, pseudo, password from client where client.pseudo = '%s' " % user)
     dude = cur.fetchone()
     
-    sql1 = 'select id_order from clients where id_gourmet = '+str(dude[0])+';'
+    sql1 = 'select id_order from listClients where id_gourmet = '+str(dude[0])+';'
     print "id_gourmet: %s"% dude[0]
     cur.execute(sql1)
     res1 = cur.fetchall()
@@ -118,24 +121,34 @@ def get_order(user):
         order['customer_pseudo'] = dude[1]
         id_order = row[0]
         print "id_order: %s" % id_order
-        sql2 = "select id, id_chef, for_the_date, for_the_time, state, lat, lng from wants where id = %s ;" % id_order
+        sql2 = "select id, id_chef, for_the_date, for_the_time, state, lat, lng, total from wants where id = %s ;" % id_order
         cur.execute(sql2)
         res2 = cur.fetchall()
         menu = {}
         for roww in res2:
+            order['id'] = roww[0]
             order['id_chef'] = roww[1]
             order['lat'] = str(roww[5])
             order['lng'] = str(roww[6])
             order['for_the_date'] = roww[2]
             order['for_the_time'] = roww[3]
             order['state'] = str(roww[4])
+            order['total'] = str(roww[7])
             id_wants = row[0]
-            sql3 = "select id_dish from eat where id_order ="+str(id_wants)+" ;"
+
+            sql5 = 'select * from chef where id = %s;' %roww[1]
+            cur.execute(sql5)
+            cheff = cur.fetchone()
+            cook = {'id':cheff[0], 'pseudo':cheff[1], 'password':'lol', 'name':cheff[3], 'image':cheff[4], 'surname':cheff[5], 'description':cheff[6], 'phone':cheff[7], 'mail':cheff[8], 'CPF':cheff[9]}
+            order['chef']= cook
+            
+            sql3 = "select id_dish, numeros from listDish where id_order ="+str(id_wants)+" ;"
             cur.execute(sql3)
             res3 = cur.fetchall()
             m =[]
             for eat in res3:
                 id_dish = eat[0]
+                print eat
                 print "id_dish: %s" %id_dish
                 sql4 = "select * from dishes where id = %s" %id_dish
                 cur.execute(sql4)
@@ -147,13 +160,14 @@ def get_order(user):
                 dishes['image'] = food[3]
                 dishes['description'] = food[4]
                 dishes['disponibility'] = str(food[5])
-                dishes['num'] = str(food[6])
+                dishes['number'] = eat[1]
+                dishes['max'] = str(food[7])
+                dishes['price'] = str(food[8])
                 m.append(dishes)
             menu['dishes'] = m
             order['wanted'] = menu
             orderList.append(order)
     print json.dumps(orderList)
-
     return json.dumps(orderList)
 
 
@@ -175,10 +189,10 @@ def get_near():
     response = []
 
     for tmp in places:
-        sql1 = "select * from users where id = '%s'" % tmp[1]
+        sql1 = "select * from chef where id = '%s'" % tmp[1]
         cur.execute(sql1)
         chef = cur.fetchone()
-        chefObj = {'id':chef[0], 'pseudo':chef[1], 'password':'lol', 'name':chef[3], 'surname':chef[4], 'description':chef[5], 'phone':chef[6], 'mail':chef[7], 'CPF':chef[8], 'status':chef[9]}
+        chefObj = {'id':chef[0], 'pseudo':chef[1], 'password':'lol', 'name':chef[3], 'image':chef[4], 'surname':chef[5], 'description':chef[6], 'phone':chef[7], 'mail':chef[8], 'CPF':chef[9]}
         
         sql2 = 'select ifnull(avg(note),0) as average from  reviews where id_chef='+str(tmp[1])+';'
         cur.execute(sql2)
@@ -187,14 +201,13 @@ def get_near():
         sql3 = 'select * from dishes where id_chef ='+str(chef[0])+' and disponibility = true;'
         cur.execute(sql3)
         menu = cur.fetchall()
-        foods =[]
+        foods =[] 
 
         for dish in menu:
-            one = {'id':dish[0], 'id_chef':dish[1], 'name':dish[2], 'image':dish[3], 'description':dish[4], 'disponibility':dish[5]}
+            one = {'id':dish[0], 'id_chef':dish[1], 'name':dish[2], 'image':dish[3], 'description':dish[4], 'disponibility':dish[5], 'max':dish[7], 'price':dish[8]}
             foods.append(one)
         dictTmp={'id':tmp[0], 'id_chef':tmp[1], 'lat':str(tmp[2]), 'lng':str(tmp[3]), 'distance':str(tmp[4]), 'chef':chefObj, 'menu':foods}
         response.append(dictTmp)
-        print json.dumps(response)
     db.close()
     return json.dumps(response)
 
@@ -210,16 +223,16 @@ def new_order():
 
     order = json.loads(request.get_data())
     print order
-    sql1 = "select * from users where pseudo = '%s'" % order['customer_pseudo']
+    sql1 = "select * from client where pseudo = '%s'" % order['customer_pseudo']
     cur.execute(sql1)
     client = cur.fetchone()
 
-    sql2 = 'insert into wants values (null,'+ str(order['id_chef'])+', \''+order['for_the_date']+'\' , \''+order['for_the_time']+'\', 0,'+order['lat']+', '+order['lng']+', null);'
+    sql2 = 'insert into wants values (null,'+ str(order['id_chef'])+', \''+order['for_the_date']+'\' , \''+order['for_the_time']+'\', 0,'+order['lat']+', '+order['lng']+', null,'+str(order['total'])+');'
     print sql2
     cur.execute(sql2)
     db.commit()
 
-    sql3 = ' insert into clients values (null, LAST_INSERT_ID(),'+str(client[0])+');'
+    sql3 = ' insert into listClients values (null, LAST_INSERT_ID(),'+str(client[0])+');'
     cur.execute(sql3)
     db.commit()
 
@@ -233,14 +246,21 @@ def new_order():
     for d in listD:
         print "SUPER INTERESTING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         print d
-        sql4 = 'insert into eat values (null,'+str(lastID)+','+str(d['id'])+', '+str(d['number'])+');'
+        sql4 = 'insert into listDish values (null,'+str(lastID)+','+str(d['id'])+', '+str(d['number'])+');'
         cur.execute(sql4)
         db.commit()
            
     return jsonify(id="14")
 
+def encodeB64(path):
+    print path
+    with open("/home/darakt/JaPronto/tmp/prato 3.png", "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    return encoded_string
 
-'''
-    for key, value in order.iteritems():
-        print key, value
-'''
+def decodeB64(imgData, name):
+    path = "/home/darakt/JaPronto/tmp/"+name+".png"
+    fh = open(path, "wb")
+    fh.write(imgData.decode('base64'))
+    fh.close()
+    return path

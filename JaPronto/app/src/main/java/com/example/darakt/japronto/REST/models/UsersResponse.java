@@ -10,9 +10,9 @@ import java.util.List;
  */
 
 public class UsersResponse {
-    List<User> somes;
+    List<Client> somes;
 
-    public List<User> getSomes() {
+    public List<Client> getSomes() {
         return somes;
     }
 

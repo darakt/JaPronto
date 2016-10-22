@@ -1,14 +1,13 @@
-package com.example.darakt.japronto;
+package com.example.darakt.japronto.historic;
 
 import android.app.ListActivity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.TextView;
 
-import com.example.darakt.japronto.REST.models.Dish;
-import com.example.darakt.japronto.REST.models.Menu;
+import com.example.darakt.japronto.adapter.MyAdapterOld;
+import com.example.darakt.japronto.R;
 import com.example.darakt.japronto.REST.models.Order;
 
 /**
@@ -25,9 +24,11 @@ public class ListOrder extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_old_order);
         orders = (Order[]) getIntent().getSerializableExtra("orders");
-        Log.d(TAG, "OnCreate: "+orders[0].getCustomer_pseudo() );
         adapter = new MyAdapterOld(this, orders);
         setListAdapter(adapter);
+
+        TextView total = (TextView) findViewById(R.id.totalR);
+        total.setVisibility(View.GONE);
 
 
     }

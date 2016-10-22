@@ -1,9 +1,8 @@
 package com.example.darakt.japronto.REST;
 
 import com.example.darakt.japronto.REST.models.Area;
-import com.example.darakt.japronto.REST.models.AreaResponse;
+import com.example.darakt.japronto.REST.models.Client;
 import com.example.darakt.japronto.REST.models.Order;
-import com.example.darakt.japronto.REST.models.User;
 import com.example.darakt.japronto.REST.models.test;
 
 import java.util.List;
@@ -12,7 +11,6 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -22,11 +20,11 @@ import retrofit2.http.Query;
 
 public interface ApiService {
 
-    @GET("japronto/api/{user}")
-    Call<User> connect(@Path("user") String user);
+    @GET("japronto/api/{client}")
+    Call<Client> connect(@Path("client") String user);
 
-    @POST ("japronto/api/user/new/")
-    Call<User> createUser(@Body User user);
+    @POST ("japronto/api/client/new/")
+    Call<Client> createUser(@Body Client client);
 
     @GET("japronto/api/foods/")
     Call<test> getFood();
@@ -37,7 +35,7 @@ public interface ApiService {
     @POST("japronto/api/order")
     Call<Order> createOrder(@Body Order order);
 
-    @GET("japronto/api/order/{user}")
-    Call<List<Order>> getMyOrders(@Path("user") String user);
+    @GET("japronto/api/order/{client}")
+    Call<List<Order>> getMyOrders(@Path("client") String user);
 
 }

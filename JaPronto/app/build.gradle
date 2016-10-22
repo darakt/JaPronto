@@ -39,6 +39,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.github.bumptech.glide:glide:3.5.2'
+    compile 'com.android.support:support-v4:24.0.0'
     // https://mvnrepository.com/artifact/com.squareup.retrofit2/converter-gson
     compile group: 'com.squareup.retrofit2', name: 'converter-gson', version: '2.1.0'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'

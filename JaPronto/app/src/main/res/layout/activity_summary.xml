@@ -3,56 +3,120 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="9"/>
-
     <LinearLayout
-        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_centerInParent="true"
-        android:layout_weight="1">
+        android:layout_weight="2"
+        android:background="@color/colorPrimaryDark"
+        >
 
-        <Button
-            android:id="@+id/noF"
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/chefImageS"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:padding="10dp"
-            android:text="Recusar"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:textColor="#ffffff"
-            android:background="#ee1c1e"/>
+            android:scaleType="center"
+            android:layout_marginLeft="3dp" />
 
-        <Button
-            android:id="@+id/cleanF"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:padding="10dp"
-            android:text="Limpar"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:textColor="#ffffff"
-            android:background="#ee1c1e"/>
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <Button
-            android:id="@+id/yesF"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:padding="10dp"
-            android:text="Validar"
-            android:gravity="center"
+            <TextView
+                android:id="@+id/chefPseudoS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pseudo"
+                android:textColor="#ffffff"
+                />
+
+            <TextView
+                android:id="@+id/descriptionS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textColor="#ffffff"
+                />
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="253dp"
             android:layout_gravity="center"
-            android:textColor="#ffffff"
-            android:background="@color/colorAccent"/>
+            android:layout_weight="5"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/totalS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:gravity="center"
+                />
+
+            <TextView
+                android:id="@+id/forThe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/noF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:text="Recusar"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textColor="#ffffff"
+                android:background="#ee1c1e"/>
+
+            <Button
+                android:id="@+id/cleanF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:text="Limpar"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textColor="#ffffff"
+                android:background="#ee1c1e"/>
+
+            <Button
+                android:id="@+id/yesF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:text="Validar"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textColor="#ffffff"
+                android:background="@color/colorAccent"/>
+
+        </LinearLayout>
 
     </LinearLayout>
-
 </LinearLayout>

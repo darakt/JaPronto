@@ -13,11 +13,9 @@
         <ImageView
             android:id="@+id/chefImage"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
+            android:layout_height="match_parent"
             android:scaleType="center"
-            android:layout_marginLeft="3dp"
-            android:src="@mipmap/logo" />
+            android:layout_marginLeft="3dp" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -38,14 +36,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Description"
-                android:textColor="#ffffff"
-                />
-
-            <TextView
-                android:id="@+id/chefAVG"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="AVG"
                 android:textColor="#ffffff"
                 />
 
